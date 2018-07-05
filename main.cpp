@@ -222,7 +222,7 @@ int main() {
         std::complex<double> l;
 
         std::ofstream fout;
-        fout.open("../vertex4.dat");
+        fout.open("../data/vertex4.dat");
 
         std::ofstream fout_zero_bos_mats;
 
@@ -233,7 +233,7 @@ int main() {
             }
             for (int n2 = 0; n2 < fermionic_mats.size(); ++n2) {
                 for (int n3 = 0; n3 < fermionic_mats.size(); ++n3) {
-                 //   std::cout << bosonic_mats[n1] << " " << fermionic_mats[n2] << " " << fermionic_mats[n3] << std::endl;
+             //       std::cout << bosonic_mats[n1] << " " << fermionic_mats[n2] << " " << fermionic_mats[n3] << std::endl;
                     l = vertex4.value(bosonic_mats[n1], fermionic_mats[n2], fermionic_mats[n3]);
 
                     if (fout.is_open()) {
@@ -304,7 +304,7 @@ int main() {
 
         std::complex<double> m;
         std::ofstream fout2;
-        fout2.open("../vertex3.dat");
+        fout2.open("../data/vertex3.dat");
 
         for (int n1 = 0; n1 < bosonic_mats.size(); n1++) {
             for (int n2 = 0; n2 < fermionic_mats.size(); n2++) {
