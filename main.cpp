@@ -63,14 +63,14 @@ std::vector <std::vector <std::complex <double>>> read_function(std::string path
                     }
                     break;
                 case 8:
-                    if (((std::stod(sWords[3])) >= 0.0) and ((std::stod(sWords[5]) >= 0.0))) {
+                  //  if (((std::stod(sWords[3])) >= 0.0) and ((std::stod(sWords[5]) >= 0.0))) {
                         for (int i = 0; i < sWords.size(); i += 2) {
                             new_complex_number = std::complex<double>(std::stod(sWords[i]), std::stod(sWords[i + 1]));
                             line.push_back(new_complex_number);
                         }
-                    } else {
-                        continue;
-                    }
+                 //   } else {
+                 //       continue;
+                 //   }
                     break;
                 default:
                     std::cout << "Problem: The program can\'t work with this data structure of file " << std::endl;
@@ -159,15 +159,15 @@ int main() {
 
     std::cout << " POMEROL FUNCTIONS" << std::endl;
     std::vector<std::vector<std::complex<double>>> G;
-    G = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_2_5_fermionic_orbs_in_bath/gw_imag00.dat");
+    G = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_0_5/gw_imag00.dat");
     GF GF1(G);
 
-   // GF1.print_function();
+//    GF1.print_function();
 
     std::cout << "Size of gw_imag00.dat = " << G.size() << std::endl;
 
     std::vector<std::vector<std::complex<double>>> X;
-    X = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_2_5_fermionic_orbs_in_bath/chi0000.dat");
+    X = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_0_5/chi0000.dat");
     Chi G4(X);
 
     std::cout << "Size of chi0000.dat = " << X.size() << std::endl;
@@ -199,10 +199,10 @@ int main() {
     ////////////////////////////////         EDLib                     /////////////////////
 
     std::vector<std::vector<std::complex<double>>> Chi_charge;
-    Chi_charge = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_2_5_fermionic_orbs_in_bath/chi_ch_imp.dat");
+    Chi_charge = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_0_5/chi_ch_imp.dat");
 
     for(int n = 0; n < bosonic_mats.size(); n++){
-        if(bosonic_mats[n] != Chi_charge[n][0]){
+        if(abs(bosonic_mats[n].imag() - Chi_charge[n][0].imag()) < 0.00001 ){
             Chi_charge[n][0] = bosonic_mats[n];
         }
     }
@@ -226,16 +226,20 @@ int main() {
 
         std::ofstream fout_zero_bos_mats;
 
+        std::cout << std::endl;
+
         for (int n1 = 0; n1 < bosonic_mats.size(); ++n1) {
+        //for (int n1 = 0; n1 < 1; ++n1) {
             if (n1 == 1) {
                 //bool print_zero_bos_mats_separately = true;
              //   std::cout << n1 << std::endl;
             }
-            for (int n2 = 0; n2 < fermionic_mats.size(); ++n2) {
+           for (int n2 = 0; n2 < fermionic_mats.size(); ++n2) {
+         //   for (int n2 = 0; n2 < 1; ++n2) {
                 for (int n3 = 0; n3 < fermionic_mats.size(); ++n3) {
-             //       std::cout << bosonic_mats[n1] << " " << fermionic_mats[n2] << " " << fermionic_mats[n3] << std::endl;
+     //               std::cout << bosonic_mats[n1] << " " << fermionic_mats[n2] << " " << fermionic_mats[n3];
                     l = vertex4.value(bosonic_mats[n1], fermionic_mats[n2], fermionic_mats[n3]);
-
+     //               std::cout << l << std::endl;
                     if (fout.is_open()) {
                         fout << std::scientific << std::setprecision(12) << bosonic_mats[n1].imag() << " "
                              << fermionic_mats[n2].imag() << " " << fermionic_mats[n3].imag() << " "
@@ -244,7 +248,7 @@ int main() {
                 }
             }
         }
-
+        std::cout << std::endl;
         fout.close();
     }
 

@@ -17,10 +17,12 @@ std::complex <double> Vertex4::value(std::complex<double> matsubara1, std::compl
 
     std::complex <double> Value = Chi4.getValue(matsubara1, matsubara2, matsubara3);
 
+    // \delta_{ \nu \nu'}
     if(matsubara2 == matsubara3) {
         Value += beta * GF13.getValue(matsubara2 + matsubara1) * GF24.getValue(matsubara2);
     }
 
+    // \delta_{\omega}
     if(matsubara1 == std::complex <double> (0.0, 0.0)) {
        Value -= beta * GF14.getValue(matsubara2) * GF23.getValue(matsubara3);
     }
@@ -31,6 +33,9 @@ std::complex <double> Vertex4::value(std::complex<double> matsubara1, std::compl
             std::complex<double> check1 = GF13.getValue(matsubara2 + matsubara1);
             std::complex<double> check2 = GF23.getValue(matsubara3 + matsubara1);
         }
+
+
+  // remove legs
         Value = Value / (GF13.getValue(matsubara2 + matsubara1) * GF24.getValue(matsubara2)
                       * GF14.getValue(matsubara3) * GF23.getValue(matsubara3 + matsubara1));
 
