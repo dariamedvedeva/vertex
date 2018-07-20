@@ -4,6 +4,7 @@
 #include <sstream>
 #include <complex>
 #include <iomanip>
+//#include <omp.h>
 
 #include "GF.h"
 #include "Chi.h"
@@ -45,7 +46,7 @@ std::vector <std::vector <std::complex <double>>> read_function(std::string path
     std::string s;
     std::ifstream file(path);
     bool print_function = false;
-    std::vector <std::vector <std::complex <double>>> container;
+    std::vector <std::vector <std::complex <double > > > container;
 
     if (file.is_open()) {
         std::cout << std::endl << path << " is opened." << std::endl;
@@ -143,10 +144,11 @@ std::vector <std::complex <double>> get_fermionic_freq_from_GF(
 }
 
 
+
 int main() {
     double beta;
     beta = 100.0;
-
+//    omp_set_num_threads(4);
     bool calculate_4leg_vertex              = true;
     bool calculate_3leg_vertex              = true;
     bool calculate_3leg_vertex_from_square  = false;
@@ -158,16 +160,16 @@ int main() {
     ////////////////////////////////         POMEROL                     /////////////////////
 
     std::cout << " POMEROL FUNCTIONS" << std::endl;
-    std::vector<std::vector<std::complex<double>>> G;
-    G = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_0_5/gw_imag00.dat");
+    std::vector < std::vector < std::complex < double > > > G;
+    G = read_function("/Users/macbook/Dropbox/Notes_vertices/Calculations/U_2_5_fermionic_orbs_in_bath/gw_imag00.dat");
     GF GF1(G);
 
 //    GF1.print_function();
 
     std::cout << "Size of gw_imag00.dat = " << G.size() << std::endl;
 
-    std::vector<std::vector<std::complex<double>>> X;
-    X = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_0_5/chi0000.dat");
+    std::vector < std::vector < std::complex < double > > > X;
+    X = read_function("/Users/macbook/Dropbox/Notes_vertices/Calculations/U_2_5_fermionic_orbs_in_bath/chi0000.dat");
     Chi G4(X);
 
     std::cout << "Size of chi0000.dat = " << X.size() << std::endl;
@@ -175,8 +177,8 @@ int main() {
     ////////////////////////////////         FREQUENCIES                /////////////////////
 
     std::cout << "FREQUENCIES" << std::endl;
-    std::vector<std::complex<double>> bosonic_mats;
-    std::vector<std::complex<double>> fermionic_mats;
+    std::vector < std::complex < double > > bosonic_mats;
+    std::vector < std::complex < double > > fermionic_mats;
 
             /*
             * Fermionic and bosonic frequencies should be reading
@@ -198,8 +200,8 @@ int main() {
 
     ////////////////////////////////         EDLib                     /////////////////////
 
-    std::vector<std::vector<std::complex<double>>> Chi_charge;
-    Chi_charge = read_function("/Users/MacBookPro/Dropbox/Notes_vertices/Calculations/U_0_5/chi_ch_imp.dat");
+    std::vector < std::vector < std::complex < double > > > Chi_charge;
+    Chi_charge = read_function("/Users/macbook/Dropbox/Notes_vertices/Calculations/U_2_5_fermionic_orbs_in_bath/chi_ch_imp.dat");
 
     for(int n = 0; n < bosonic_mats.size(); n++){
         if(abs(bosonic_mats[n].imag() - Chi_charge[n][0].imag()) < 0.00001 ){
@@ -207,6 +209,20 @@ int main() {
         }
     }
     GF GF_chi_ch(Chi_charge);
+
+    /*
+     * Test get value
+     */
+
+    std::complex <double> mats;
+    std::complex <double> mats_plus_omega;
+    mats = fermionic_mats[fermionic_mats.size() - 1];
+    std::cout << "nu = " << mats << std::endl;
+    std::cout << "g(nu) = " << GF1.getValue(mats) << std::endl;
+    mats_plus_omega = mats + bosonic_mats[1];
+    std::cout << "nu + omega = " << mats_plus_omega << std::endl;
+    std::cout << "g(nu + omega) = " << GF1.getValue(mats_plus_omega)<< std::endl;
+
 
     /*
      * Change values of frequencies
@@ -227,24 +243,17 @@ int main() {
         std::ofstream fout_zero_bos_mats;
 
         std::cout << std::endl;
-
+        int mm = 1;
         for (int n1 = 0; n1 < bosonic_mats.size(); ++n1) {
-        //for (int n1 = 0; n1 < 1; ++n1) {
-            if (n1 == 1) {
-                //bool print_zero_bos_mats_separately = true;
-             //   std::cout << n1 << std::endl;
-            }
            for (int n2 = 0; n2 < fermionic_mats.size(); ++n2) {
-         //   for (int n2 = 0; n2 < 1; ++n2) {
-                for (int n3 = 0; n3 < fermionic_mats.size(); ++n3) {
-     //               std::cout << bosonic_mats[n1] << " " << fermionic_mats[n2] << " " << fermionic_mats[n3];
-                    l = vertex4.value(bosonic_mats[n1], fermionic_mats[n2], fermionic_mats[n3]);
-     //               std::cout << l << std::endl;
-                    if (fout.is_open()) {
-                        fout << std::scientific << std::setprecision(12) << bosonic_mats[n1].imag() << " "
-                             << fermionic_mats[n2].imag() << " " << fermionic_mats[n3].imag() << " "
-                             << l.real() << " " << l.imag() << std::endl;
-                    }
+               for (int n3 = 0; n3 < fermionic_mats.size(); ++n3) {
+                        l = vertex4.value(bosonic_mats[n1], fermionic_mats[n2], fermionic_mats[n3]);
+
+                        if (fout.is_open()) {
+                            fout << std::scientific << std::setprecision(12) << bosonic_mats[n1].imag() << " "
+                                 << fermionic_mats[n2].imag() << " " << fermionic_mats[n3].imag() << " "
+                                 << l.real() << " " << l.imag() << std::endl;
+                        }
                 }
             }
         }
@@ -257,7 +266,7 @@ int main() {
 
         std::cout << "3-leg vertex" << std::endl;
 
-        std::vector<std::vector<std::complex<double>>> G_sum;
+        std::vector<std::vector<std::complex < double > > > G_sum;
 
         std::ofstream fout3;
         fout3.open("../G_nu_omega.dat");
@@ -269,7 +278,7 @@ int main() {
         std::complex<double> value(0.0, 0.0);
         for (int n1 = 0; n1 < bosonic_mats.size(); n1++) {
             for (int n2 = 0; n2 < fermionic_mats.size(); n2++) {
-                std::vector<std::complex<double>> line;
+                std::vector<std::complex < double > > line;
                 line.push_back(bosonic_mats[n1]);
                 line.push_back(fermionic_mats[n2]);
 
@@ -325,7 +334,7 @@ int main() {
     }
 
     if (calculate_3leg_vertex_from_square) {
-        std::vector<std::vector<std::complex<double>>> lambda_from_square;
+        std::vector < std::vector < std::complex < double > > > lambda_from_square;
 
         for(int n1 = 0; n1 < bosonic_mats.size(); n1++){ // for every bosonic frequency
             for(int n2 = 0; n2 < fermionic_mats.size(); n2++){ //for every fermionic frequency

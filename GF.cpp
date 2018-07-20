@@ -23,18 +23,21 @@ std::complex <double> GF::getValue(std::complex<double> mats1) {
     last_matsubara_value = GF::function[GF::function.size() - 1][0];
 
     // a tail
-    if(mats1.imag() > last_matsubara_value.imag()){
+    if( std::abs(mats1.imag()) > std::abs(last_matsubara_value.imag())){
         std::complex<double> tail(0.0, 0.0);
         tail = std::complex<double>(1.0, 0.0) / mats1;
-    //    std::cout << mats1 << " \t" << tail << std::endl;
+//        std::cout << "tail" << std::endl;
+//        std::cout << mats1 << " \t" << tail << std::endl;
         value = tail;
     }
 
     // not a tail
     for(int i = 0; i < GF::function.size(); i++){
 
-        if (std::abs((mats1 - GF::function[i][0]).imag()) <= 0.000001){
+        if (std::abs((mats1 - GF::function[i][0]).imag()) <= 0.0001){
             value = GF::function[i][1];
+//            std::cout << "not a tail" << std::endl;
+//            std::cout << mats1 << " \t" << value << std::endl;
             break;
         } else {
           //  std::cout << "Panic" << std::endl;
